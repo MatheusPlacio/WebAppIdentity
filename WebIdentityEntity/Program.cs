@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WebAppIdentityEntity.Models;
 using WebIdentityEntity.Data;
+using WebIdentityEntity.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,14 +21,15 @@ var connection = builder.Configuration.GetConnectionString("DefaultConnection");
                                                                   options.UseSqlServer(connection,
                                                                   x => x.MigrationsAssembly(migrationsAssembly)));
 
-builder.Services.AddIdentityCore<MyUser>(options => { });
-builder.Services.AddScoped<IUserStore<MyUser>, 
-                                      UserOnlyStore<MyUser, MyContext>>();
+builder.Services.AddIdentity<MyUser, IdentityRole>(options => { })
+                .AddEntityFrameworkStores<MyContext>();
 
-builder.Services.AddAuthentication("cookies").AddCookie("cookies", options => options.LoginPath = "/User/Login");
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<MyUser>, MyUserClaimsPrincipalFactory>();
+
+//builder.Services.AddAuthentication("cookies").AddCookie("cookies", options => options.LoginPath = "/User/Login");
+builder.Services.ConfigureApplicationCookie(options => options.LoginPath = "/User/Login");
 
 builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(Path.GetTempPath()));
-
 
 var app = builder.Build();
 

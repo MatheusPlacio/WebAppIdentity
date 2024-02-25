@@ -13,12 +13,18 @@ namespace WebIdentityEntity.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly UserManager<MyUser> _userManager;
+        private readonly IUserClaimsPrincipalFactory<MyUser> _userClaimsPrincipalFactory;
+        private readonly SignInManager<MyUser> _signInManager;
 
         public UserController(ILogger<UserController> logger,
-                              UserManager<MyUser> userManager)
+                              UserManager<MyUser> userManager,
+                              IUserClaimsPrincipalFactory<MyUser> userClaimsPrincipalFactory,
+                              SignInManager<MyUser> signInManager)
         {
             _logger = logger;
             _userManager = userManager;
+            _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
+            _signInManager = signInManager;
         }
 
         [HttpGet]
@@ -82,16 +88,23 @@ namespace WebIdentityEntity.Controllers
 
                 if (user != null && checkPassword)
                 {
-                    var identity = new ClaimsIdentity("cookies");
-                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                    identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+                    var princiapl = await _userClaimsPrincipalFactory.CreateAsync(user);
 
-                    await HttpContext.SignInAsync("cookies", new ClaimsPrincipal(identity));
+                    await HttpContext.SignInAsync("Identity.Application", princiapl);
 
-                    return RedirectToAction("About");
+                    //var signInResult = await _signInManager.PasswordSignInAsync(model.UserName,
+                    //    model.Password, false, false);
+
+                    //if (signInResult.Succeeded)
+                    //{
+                    //    return View("About");
+
+                    //}
+
+                    return View("About");
                 }
 
-                ModelState.AddModelError("", "Usuário ou senha Inválida");
+                    ModelState.AddModelError("", "Usuário ou senha Inválida");
             }
 
             return View();
