@@ -1,21 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebIdentityEntity.ViewModel
+namespace WebIdentityEntity.Models
 {
-    public class RegisterViewModel
+    public class ResetPassword
     {
-        public string UserName { get; set; }
-
+        public string Token { get; set; }
+        public string Email { get; set; }
 
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Compare("Password")]
         [DataType(DataType.Password)]
+        [Compare("Password")]
         public string ConfirmPassword { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
     }
 }

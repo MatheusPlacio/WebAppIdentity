@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
 using WebAppIdentityEntity.Models;
+using WebIdentityEntity.Models;
 using WebIdentityEntity.ViewModel;
 
 namespace WebIdentityEntity.Controllers
@@ -31,6 +32,18 @@ namespace WebIdentityEntity.Controllers
         public IActionResult Register()
         {
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            return View(new ResetPassword { Token = token, Email = email});
         }
 
         [HttpGet]
@@ -65,7 +78,8 @@ namespace WebIdentityEntity.Controllers
                     {
                         Id = Guid.NewGuid().ToString(),
                         UserName = registerViewModel.UserName,
-                        NomeCompleto = registerViewModel.UserName
+                        NomeCompleto = registerViewModel.UserName,
+                        Email = registerViewModel.Email,    
                     };
 
                     var result = await _userManager.CreateAsync(myUser, registerViewModel.Password);
@@ -104,9 +118,63 @@ namespace WebIdentityEntity.Controllers
                     return View("About");
                 }
 
-                    ModelState.AddModelError("", "Usuário ou senha Inválida");
+                ModelState.AddModelError("", "Usuário ou senha Inválida");
             }
 
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPassword model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var resetUrl = Url.Action("ResetPassword", "User",
+                        new { token = token, email = model.Email }, Request.Scheme);
+
+                    System.IO.File.WriteAllText("resetLink.txt", resetUrl);
+
+                    return View("Success");
+                }
+                else
+                {
+
+                }
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPassword model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
+                {
+                    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+
+                    if (!result.Succeeded)
+                    {
+                        foreach (var erro in result.Errors)
+                        {
+                            ModelState.AddModelError("", erro.Description);
+                        }
+
+                        return View();
+                    }
+                    return View("Success");
+                }
+
+                ModelState.AddModelError("", "Invalid Request");
+            }
             return View();
         }
 

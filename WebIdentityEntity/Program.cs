@@ -22,9 +22,12 @@ var connection = builder.Configuration.GetConnectionString("DefaultConnection");
                                                                   x => x.MigrationsAssembly(migrationsAssembly)));
 
 builder.Services.AddIdentity<MyUser, IdentityRole>(options => { })
-                .AddEntityFrameworkStores<MyContext>();
+                .AddEntityFrameworkStores<MyContext>()
+                .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<MyUser>, MyUserClaimsPrincipalFactory>();
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromHours(3));
 
 //builder.Services.AddAuthentication("cookies").AddCookie("cookies", options => options.LoginPath = "/User/Login");
 builder.Services.ConfigureApplicationCookie(options => options.LoginPath = "/User/Login");
