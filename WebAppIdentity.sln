@@ -5,7 +5,9 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppIdentity", "WebAppIdentity\WebAppIdentity.csproj", "{21F8AB86-D134-4249-8765-B7C0FC50573E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebIdentityEntity", "WebIdentityEntity\WebIdentityEntity.csproj", "{2BFA4B79-AA9A-4168-9F8D-D6DCEF560C3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebIdentityEntity", "WebIdentityEntity\WebIdentityEntity.csproj", "{2BFA4B79-AA9A-4168-9F8D-D6DCEF560C3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT", "JWT\JWT.csproj", "{F4F68408-234F-49EF-BE20-FE04CC84F36E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{2BFA4B79-AA9A-4168-9F8D-D6DCEF560C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BFA4B79-AA9A-4168-9F8D-D6DCEF560C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BFA4B79-AA9A-4168-9F8D-D6DCEF560C3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4F68408-234F-49EF-BE20-FE04CC84F36E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4F68408-234F-49EF-BE20-FE04CC84F36E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4F68408-234F-49EF-BE20-FE04CC84F36E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4F68408-234F-49EF-BE20-FE04CC84F36E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

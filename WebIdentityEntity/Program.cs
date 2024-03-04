@@ -21,9 +21,18 @@ var connection = builder.Configuration.GetConnectionString("DefaultConnection");
                                                                   options.UseSqlServer(connection,
                                                                   x => x.MigrationsAssembly(migrationsAssembly)));
 
-builder.Services.AddIdentity<MyUser, IdentityRole>(options => { })
+builder.Services.AddIdentity<MyUser, IdentityRole>(options =>
+                 {
+                     options.SignIn.RequireConfirmedEmail = true;
+                     options.Password.RequireDigit = false;
+                     options.Password.RequireNonAlphanumeric = false;
+                     options.Password.RequireLowercase = false;
+                     options.Password.RequireUppercase = false;
+                     options.Password.RequiredLength = 4;
+                 })
                 .AddEntityFrameworkStores<MyContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddPasswordValidator<NaoContemValidadorSenha<MyUser>>();
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<MyUser>, MyUserClaimsPrincipalFactory>();
 

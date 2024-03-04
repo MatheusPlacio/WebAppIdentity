@@ -47,6 +47,24 @@ namespace WebIdentityEntity.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> ConfirmEmailAddress(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null)
+            {
+                var result = await _userManager.ConfirmEmailAsync(user, token);
+
+                if (result.Succeeded)
+                {
+                    return View("Success");
+                }
+            }
+
+            return View("Error");
+        }
+
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
@@ -84,6 +102,24 @@ namespace WebIdentityEntity.Controllers
 
                     var result = await _userManager.CreateAsync(myUser, registerViewModel.Password);
 
+                    if (result.Succeeded)
+                    {
+                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(myUser);
+                        var confirmationEmail = Url.Action("ConfirmEmailAddress", "User",
+                                                new { token = token, email = myUser.Email }, Request.Scheme);
+
+                        System.IO.File.WriteAllText("ConfirmEmail.txt", confirmationEmail);
+                    }
+                    else
+                    {
+                        foreach (var erro in result.Errors)
+                        {
+                            ModelState.AddModelError("", erro.Description);
+                        }
+
+                        return View();
+                    }
+
                 }
 
                 return View("Success");
@@ -102,6 +138,12 @@ namespace WebIdentityEntity.Controllers
 
                 if (user != null && checkPassword)
                 {
+                    if (!await _userManager.IsEmailConfirmedAsync(user))
+                    {
+                        ModelState.AddModelError("", "E-mail não está válido!");
+                        return View();
+                    }
+
                     var princiapl = await _userClaimsPrincipalFactory.CreateAsync(user);
 
                     await HttpContext.SignInAsync("Identity.Application", princiapl);
