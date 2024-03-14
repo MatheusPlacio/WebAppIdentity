@@ -26,16 +26,24 @@ namespace JWT.Controllers
             _roleManager = roleManager;
         }
 
+        //[HttpGet]
+        //[Authorize(Roles = "ADMIN")]
+        //public IActionResult Get()
+        //{
+        //    return Ok(new
+        //    {
+        //        role = new RoleDto(),
+        //        updateUserRole = new UpdateUserRoleDto()
+        //    });
+        //}
+
         [HttpGet]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize()]
         public IActionResult Get()
         {
-            return Ok(new
-            {
-                role = new RoleDto(),
-                updateUserRole = new UpdateUserRoleDto()
-            });
+            return Ok("Autorizado");
         }
+
 
         [HttpPost("CreateRole")]
         public async Task<IActionResult> CreateRole(RoleDto roleDto)
